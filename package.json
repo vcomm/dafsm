@@ -1,0 +1,17 @@
+{
+  "name": "dafsm",
+  "version": "1.0.0",
+  "description": "dafsm",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "keywords": [
+    "fsm"
+  ],
+  "author": "Video Communication",
+  "license": "MIT"
+}
