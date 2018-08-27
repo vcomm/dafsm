@@ -1,0 +1,25 @@
+{
+  "name": "dafsm_cli",
+  "version": "1.0.0",
+  "description": "Dynamic attachment finite state machine tools command line interface",
+  "main": "index.js",
+  "scripts": {
+    "usage": "echo build_library 'nodejs|webjs' 'namelib' 'input.json' 'output.js'",
+    "srvtest": "node build_library nodejs tblib ./examples/tb_web_client.json tokbox.js",
+    "clntest": "node build_library webjs tblib ./examples/tb_web_client.json tokbox.js",
+    "diagweb": "node build_diagram ../examples/tb_web_client.json ./examples/tb_web_diag.svg",
+    "diagnode": "node build_diagram ../examples/tb_node_server.json ./examples/tb_node_diag.svg"
+  },
+  "keywords": [
+    "CLI",
+    "FSM",
+    "ASM"
+  ],
+  "author": "Yakov Liskoff",
+  "license": "ISC",
+  "dependencies": {
+    "log4js": "^3.0.5",
+    "open": "0.0.5",
+    "svg-builder": "^1.0.0"
+  }
+}
