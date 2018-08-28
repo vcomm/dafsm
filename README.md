@@ -57,11 +57,26 @@ State diagrams (also called State Chart diagrams) are used to help the developer
 
 Analytical Notation
 
-S0 [Z0] = { S1(X01/Y01) }
-S1 [Z1] = { S0(X10/Y10), S2(X12/Y12), S3(X13/Y13) }
-S2 [Z2] = { S0(X20/Y20), S4(X24/Y24) }
-S3 [Z3] = { S2(X32/Y32), S3(X33/Y33) }
-S4 [Z4] = { S0(X40/Y40), S3(X43/Y43) }
+S0 [W0] = { S1(X01/Y01)[V0] }
+
+S1 [W1] = { S0(X10/Y10)[V0], S2(X12/Y12)[V2], S3(X13/Y13)[V3] }
+
+S2 [W2] = { S0(X20/Y20)[V0], S4(X24/Y24)[V4] }
+
+S3 [W3] = { S2(X32/Y32)[V2], S3(X33/Y33)[V3] }
+
+S4 [W4] = { S0(X40/Y40)[V0], S3(X43/Y43)[V3] }
+
+ There are several action types:
+Entry action - V
+which is performed when entering the state 
+Exit action  - W
+which is performed when exiting the state 
+Input action - X
+which is performed depending on present state and input conditions 
+Transition action - Y
+which is performed when performing a certain transition 
+
 
 Algorithmic State Machine Notation (Block-Scheme)
 
