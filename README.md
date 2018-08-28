@@ -42,3 +42,45 @@ The functions defining the Mealy state machine at transition t are:
 	O(t+1) = Function (S(t),I(t))
 While the state transition function S is same for both states machine, the output function O is different. The output of the Moore machine depends solely on the current state, while the output of the Mealy machine depends on both the current state and input.
 
+Deterministic and Non- Deterministic.
+
+In a state transition diagram, if  no two outgoing edges of a state have the same label, then the corresponding machine is called a deterministic finite state machine …if two or more outgoing edges of a state have the same label, then it is called a non-deterministic finite state machine.
+
+# Benefits of using Finite State Machines.
+
+Some of the benefits of using Finite State Machines (FSMs) include early detection of design flaws, increased reusability, parallel module implementation, and easier module integration and testing. The increasing complexity of software over the past few years has led to implementing the “heart” of the software as an FSM. The FSM approach is most widely used today in more complex software systems which must conform to a given protocol or standard. “Other possible uses of FSMs include: the implementation of compilers and other language processing tools; communication systems, such as the modeling of network protocols and the interpretation of escape  charter sequences in terminal emulators, and the design of interactive user interface ”. Developing software using an FSM approach also encourages highly cohesive and loosely coupled software modules.
+
+State Diagram Notation (Graph)
+
+State diagrams (also called State Chart diagrams) are used to help the developer better understand any complex/unusual functionalities or business flows of specialized areas of the system. In short, State diagrams depict the dynamic behavior of the entire system, or a sub-system, or even a single object in a system. This is done with the help of Behavioral elements.
+
+
+Analytical Notation
+
+S0 [Z0] = { S1(X01/Y01) }
+S1 [Z1] = { S0(X10/Y10), S2(X12/Y12), S3(X13/Y13) }
+S2 [Z2] = { S0(X20/Y20), S4(X24/Y24) }
+S3 [Z3] = { S2(X32/Y32), S3(X33/Y33) }
+S4 [Z4] = { S0(X40/Y40), S3(X43/Y43) }
+
+Algorithmic State Machine Notation (Block-Scheme)
+
+You have already seen how to describe finite state machines in terms of state diagrams and tables. However, it can be difficult to describe complex finite state machines in this way. Recently, hardware designers have shifted toward using alternative representations of FSM behavior that look more like software descriptions. In this section, we introduce algorithmic state machine (ASM) notation. ASMs are similar to program flowcharts, but they have a more rigorous concept of timing. 
+
+You may wonder what is wrong with state diagrams. The problem is that they do not adequately capture the notion of an algorithm-a well-defined sequence of steps that produce a desired sequence of actions based on input data. State diagrams are weak at capturing the structure behind complex sequencing. The representations discussed next do a better job of making this sequencing structure explicit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
