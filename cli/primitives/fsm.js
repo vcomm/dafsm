@@ -22,17 +22,6 @@ const fsmChart = (function () {
         .width(width)
         .height(height);
 
-    diagram = svg
-        .rect({
-            x: 0,
-            y: 0,
-            width: width,
-            height: height,
-            fill: 'white',
-            'stroke-width': 2,
-            stroke: '#000',
-        }).render();
-
     function countTrans2State(arr) {
         var counts = {}
         arr.forEach(function(x) { counts[x] = (counts[x] || 0)+1; })
@@ -169,10 +158,28 @@ const fsmChart = (function () {
     }
 
     return {
-        draw: function(jsoname) {
-            logic = require(jsoname)
+        draw: function(fsm,w,h) {
+            logic = fsm
             shiftdown = []
             shiftup   = []
+
+            if (w || h) {
+                width = w
+                height= h
+                svg.width(width)
+                   .height(height);
+            }
+            
+            diagram = svg
+                .rect({
+                    x: 0,
+                    y: 0,
+                    width: width,
+                    height: height,
+                    fill: 'white',
+                    'stroke-width': 2,
+                    stroke: '#000',
+                }).render();
             try {
                 let indx = 0
                 calcPlan(logic)

@@ -20,7 +20,7 @@ process.argv.forEach(function (val, index, array) {
 });
 
 const chart = require('./primitives/fsm')
-let logo =  chart.draw(injson)
+let logo =  chart.draw(require(injson))
 
 fs.writeFile(outsvg, logo,
     function(err) {
