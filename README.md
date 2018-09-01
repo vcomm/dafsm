@@ -1,2 +1,2 @@
 # dafsm
-Dynamic attachment finite state machine 
+Dynamic attachment finite state machine engine
