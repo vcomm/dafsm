@@ -19,7 +19,7 @@ const fsmChart = (function () {
        ,shiftup = []
        ,evcount = 0
 
-    const svg = require('svg-builder')
+    const svg = require('buildSVG')
         .width(width)
         .height(height);
 

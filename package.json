@@ -13,5 +13,9 @@
     "fsm"
   ],
   "author": "Video Communication",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "buildSVG": "git+https://github.com/vcomm/buildSVG.git"
+  }
+
 }
