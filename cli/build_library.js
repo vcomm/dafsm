@@ -122,7 +122,7 @@ if (type === 'nodejs') {
         '                });\n' +
         '        }\n'
 } else {
-    code += '        loadLogic: function(name) {\n' +
+    code += '        loadLogic: function(name,cblk) {\n' +
         '          fetch(\'blogic?lname=\'+name, {\n' +
         '            method: \'get\',\n' +
         '            headers: {\n' +
@@ -131,7 +131,8 @@ if (type === 'nodejs') {
         '            body: null\n' +
         '          })\n' +
         '            .then(res => { return res.json(); })\n' +
-        '            .then(data => logicsStore[name] = data)\n' +
+        '            .then(data => { logicsStore[name] = data; return name; })\n' +
+        '            .then(logicname => { if (cblk) cblk(logicname) })\n'+
         '            .catch(function catchErr(error) {\n' +
         '                console.error(error);\n' +
         '                alert(\'Failed to: \', param.route);\n' +
@@ -169,7 +170,18 @@ if (type === 'nodejs') {
     //code += `module.exports = ${library}`
     code += `\nmodule.exports = wrapper`
 } else {  // webjs
-
+    code += `\nwindow.addEventListener('load', function () {`+
+        `\nconst name = 'logicName'`+
+        `\nwrapper.loadLogic(name, function (lname) {`+
+        `\n  wrapper.attachLogic(lname,function (fsm) {`+
+        `\n       fsm.cntx = ${library}`+
+        `\n       fsm.start.func(fsm.cntx)`+
+        `\n  })`+
+        `\n})`+
+        `\n}, false);`+
+        `\nwindow.addEventListener('unload', function () {`+
+        `\n})`+
+        "\n // include in html <script src='/scripts/dafsm/lib/dafsm.js'></script>"
 }
 
 /*

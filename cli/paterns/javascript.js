@@ -52,7 +52,8 @@ const jsPatern = (function () {
             let code = `'use strict';\n\nlet ${library} = {\n` +
                 '    ev_Proc: function(msg) {\n ' +
                 '       // some receive msg processing\n' +
-                `       dafsm.event(${library}.fsm)\n` +
+                `       // for nodejs call: dafsm.event(${library}.fsm)\n` +
+                `       // for webjs  call: DAFSM.event(${library}.fsm)\n` +
                 '    },\n' +
                 '    lib: {\n'
             
@@ -64,7 +65,7 @@ const jsPatern = (function () {
             code += '\nlet wrapper  = (function () {\n' +
                 '    let logicsStore = {};\n'
             if (type === 'nodejs')  {
-                code += '    const dafsm = require(\'dafsm\').DAFSM'
+                code += '    const dafsm = require(\'dafsm\').FDAFSM'
             }
             code += '\n' +
                 '    return {\n'
@@ -73,7 +74,7 @@ const jsPatern = (function () {
                 code += '        loadLogic: function(name) {\n' +
                     '            logicsStore[name] = require(\'./logic/\'+name+\'.json\')\n' +
                     '        }\n' +
-                    '        ,attachLogic: function(name,cblk) {\n' +
+                    '        ,attachLogic: function(name,mycntx,cblk) {\n' +
                     '           new Promise(function(resolve, reject) {\n' +
                     '                if(logicsStore[name]) {\n' +
                     '                    resolve(logicsStore[name])\n' +
@@ -85,20 +86,23 @@ const jsPatern = (function () {
                     `                    return dafsm.link(fsm,${library})\n` +
                     '                })\n' +
                     '                .then(fsm => {\n' +
-                    '                    logicsStore[name] = dafsm.init(fsm)\n' +
-                    `                    ${library}.fsm = logicsStore[name]\n` +
+                    '                    logicsStore[name] = fsm\n' +
+                    '                    dafsm.init(fsm,mycntx)\n' +
                     `                    ${library}.com = new comModule(${library}.ev_Proc)\n` +
                     '                    if (cblk) {\n' +
-                    '                        cblk(logicsStore[name])\n' +
+                    '                        cblk(mycntx)\n' +
                     '                    }\n' +
                     '                })\n' +
                     '                .catch(function catchErr(error) {\n' +
                     '                    if (error) console.error(error)\n' +
                     '                });\n' +
+                    '        }\n'+
+                    '        ,runStep: function(cntx) {\n'+
+                    '            dafsm.event(cntx)\n'+
                     '        }\n'
             } else {
-                code += '        loadLogic: function(name) {\n' +
-                    '          fetch(\'blogic?lname=\'+name, {\n' +
+                code += '        loadLogic: function(name,cblk) {\n' +
+                    '          fetch(\'/blogic?lname=\'+name, {\n' +
                     '            method: \'get\',\n' +
                     '            headers: {\n' +
                     '                \'Content-Type\': \'application/json\'\n' +
@@ -106,7 +110,10 @@ const jsPatern = (function () {
                     '            body: null\n' +
                     '          })\n' +
                     '            .then(res => { return res.json(); })\n' +
-                    '            .then(data => logicsStore[name] = data)\n' +
+                    '            .then(data => {\n' +
+                    '               logicsStore[name] = data;\n'+
+                    '               if (cblk) cblk(name)\n'+
+                    '             })\n' +
                     '            .catch(function catchErr(error) {\n' +
                     '                console.error(error);\n' +
                     '                alert(\'Failed to: \', param.route);\n' +
@@ -121,10 +128,10 @@ const jsPatern = (function () {
                     '                }\n' +
                     '           })\n' +
                     '                .then(fsm => {\n' +
-                    `                    return dafsm.link(fsm,${library})\n` +
+                    `                    return DAFSM.link(fsm,${library})\n` +
                     '                })\n' +
                     '                .then(fsm => {\n' +
-                    '                    logicsStore[name] = dafsm.init(fsm)\n' +
+                    '                    logicsStore[name] = DAFSM.init(fsm)\n' +
                     `                    ${library}.fsm = logicsStore[name]\n` +
                     `                    ${library}.com = new comModule(${library}.ev_Proc)\n` +
                     '                    if (cblk) {\n' +
@@ -141,9 +148,27 @@ const jsPatern = (function () {
                 '})()\n'
 
             if (type === 'nodejs') {
-                code += `\nmodule.exports = wrapper`
+                code += `\nmodule.exports = wrapper\n`+
+                '// insert in main file \n'+
+                '// let myContent = { id: "test"}\n'+
+                '// const lserver = require("./wrapper")\n'+
+                '// lserver.loadLogic("client")\n'+
+                '// lserver.attachLogic("client", myContent, function (cntx) {\n'+
+                '//    cntx.logic.start.func(cntx)\n'+
+                '//})'
             } else {  // webjs
-
+                code += `\nwindow.addEventListener('load', function () {`+
+                    `\nconst name = 'logicName'`+
+                    `\nwrapper.loadLogic(name, function (lname) {`+
+                    `\n  wrapper.attachLogic(lname,function (fsm) {`+
+                    `\n       fsm.cntx = ${library}`+
+                    `\n       fsm.start.func(fsm.cntx)`+
+                    `\n  })`+
+                    `\n})`+
+                    `\n}, false);`+
+                    `\nwindow.addEventListener('unload', function () {`+
+                    `\n})`+
+                    "\n // include in html <script src='/scripts/dafsm/lib/dafsm.js'></script>"
             }
             return code;
         }
