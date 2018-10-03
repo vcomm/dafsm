@@ -1,3 +1,43 @@
+import Foundation
+
+let jsonString = """
+{
+\"id\": \"client\",\"type\": \"FSM\",\"prj\": \"tb_\",\"complete\": false,
+\"start\": {\"name\": \"fnStart\"},\"stop\": {\"name\": \"fnStop\"},\"countstates\": 3,
+\"states\": [
+    {
+      \"key\": \"init\",
+      \"name\": \"InitialState\",
+      \"exits\": [{\"name\": \"fnLetsgo\"}],
+      \"transitions\": [
+        {
+          \"nextstatename\": \"final\",
+          \"triggers\": [
+            {
+              \"name\": \"evComplete\"
+            }
+          ],
+          \"effects\": [
+            {
+              \"name\": \"fnGoto\"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      \"key\": \"final\",
+      \"name\": \"FinalState\",
+      \"entries\": [
+        {
+          \"name\": \"fnWelcome\"
+        }
+      ]
+    }
+  ]
+}
+"""
+
 struct Action: Codable {
     let name: String
 //    var fnidx: Int?
@@ -31,7 +71,7 @@ var logic = try? decoder.decode(Logic.self, from: jsonData)
 //logic?.start.fnidx = 5
 print(logic as Any)
 */
-// --------- User define structure -------------------
+// ---------------------------------
 struct Context {
   var keystate: String = "init"
   var complete: Bool = false
@@ -39,6 +79,9 @@ struct Context {
   // User define parameters
   var mydata: String = ""
 }
+
+var myData = Context()
+//print(myData)
 
 // ------ dafsm core -------------------------------
 
@@ -152,4 +195,70 @@ class dafsm {
     }
   }
 
+}
+
+// ----------------------------------------
+
+// ---------------------------------
+class wrapper: dafsm {
+
+  let mSDK : [String : (_ cntx: inout Context) -> Bool] = [
+    "evComplete": {(_ cntx: inout Context) -> Bool in
+                      print("evComplete -> ")
+                      return true
+                   },
+    "fnGoto":  {(_ cntx: inout Context) -> Bool in
+                      print("fnGoto -> ")
+                      return true
+                },
+    "fnLetsgo": {(_ cntx: inout Context) -> Bool in
+                      cntx.mydata += ",lets"
+                      print("fnLetsgo ->  \( cntx.mydata )")
+                      return true
+                 },
+    "fnWelcome": {(_ cntx: inout Context) -> Bool in
+                      print("fnWelcome -> ")
+                      return true
+                 },
+    "fnStart" : {(_ cntx: inout Context) -> Bool in
+                      print("fnStart -> ")
+                      return true
+                 },
+    "fnStop" : {(_ cntx: inout Context) -> Bool in
+                      print("fnStop -> ")
+                      return true
+               }
+  ]
+
+  override func call(fname: String) -> ((_ cntx: inout Context) -> Bool) {
+    if let cfunc = self.mSDK[fname] {
+      return cfunc
+    } else {
+      return {(_ cntx: inout Context) -> Bool in
+                print("Not found function in SDK")
+                return false
+             }
+    }
+  }
+
+  func loadLogic(json: String) -> Logic? {
+    let jsonData = json.data(using: .utf8)!
+    let decoder = JSONDecoder()
+    if let logic = try? decoder.decode(Logic.self, from: jsonData) {
+      return logic
+    } else {
+      return nil
+    }
+  }
+
+}
+
+let engine = wrapper()
+//let _ = engine.call(fname: "fnLetsgo")(&myData)
+if let blogic = engine.loadLogic(json: jsonString) {
+  if engine.inits(fsm: blogic,&myData) {
+    engine.event(&myData)
+    let _ = engine.inits(fsm: blogic,&myData)
+    print(myData.keystate)
+  }
 }
