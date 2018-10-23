@@ -19,7 +19,7 @@ const fsmChart = (function () {
        ,shiftup = []
        ,evcount = 0
 
-    const svg = require('buildSVG')
+    const svg = require('svg-builder')
         .width(width)
         .height(height);
 
@@ -263,7 +263,7 @@ const fsmChart = (function () {
                 stroke: '#000',
                 onmouseover: "this.style.stroke = '#ffc700'; this.style['stroke-width'] = 3; top.showTooltip(evt, this.id);",
                 onmouseout: "this.style.stroke = '#000000'; this.style['stroke-width'] = 2; top.hideTooltip();"
-               ,onclick: " top.trans2Goto(evt,this)"
+               ,onclick: " top.trans2Goto(this)"
             }).animate({
                 'xlink:href': '#'+state.key,
                 attributeName: "fill",
@@ -277,7 +277,7 @@ const fsmChart = (function () {
                 keySplines: ".42 0 1 1",
 */
                 dur: "3s",
-                begin: trigname+".click + 0.3s",
+                begin: trigname+".click",
                 fill: "remove",
                 id: state.key+'2'+trans.nextstatename
             }).animate({
