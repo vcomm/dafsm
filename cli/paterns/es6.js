@@ -1,45 +1,79 @@
 'use strict'
 
 const es6Patern = (function () {
-
+    
     function sourceGenerator(logic) {
         let str = ''
+        console.info(`sourceGenerator`)
         try {
             str += `         ${logic.start.name}: function(cntx) { }\n`+
                    `        ,${logic.stop.name}: function(cntx) { }\n`
 
-            for(let key of Object.keys(logic.states)) {
-                let state = logic.states[key];
-                if (state.hasOwnProperty("exits")) {
-                    state.exits.forEach(action => {
-                        str += `        ,${action.name}: function(cntx) { }\n`
-                    })
+            if (Array.isArray(logic.states))
+                logic.states.forEach(state => {
+                    if (state.hasOwnProperty("exits")) {
+                        state.exits.forEach(action => {
+                            str += `        ,${action.name}: function(cntx) { }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("stays")) {
+                        state.stays.forEach(action => {
+                            str += `        ,${action.name}: function(cntx) { }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("entries")) {
+                        state.entries.forEach(action => {
+                            str += `        ,${action.name}: function(cntx) { }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("transitions")) {
+                        state.transitions.forEach(trans => {
+                            if (trans.hasOwnProperty("triggers")) {
+                                trans.triggers.forEach(trig => {
+                                    str += `        ,${trig.name}: function(cntx) { }\n`
+                                })
+                            }
+                            if (trans.hasOwnProperty("effects")) {
+                                trans.effects.forEach(effect => {
+                                    str += `        ,${effect.name}: function(cntx) { }\n`
+                                })
+                            }
+                        })
+                    }
+                })
+            else
+                for(let key of Object.keys(logic.states)) {
+                    let state = logic.states[key]
+                    if (state.hasOwnProperty("exits")) {
+                        state.exits.forEach(action => {
+                            str += `        ,${action.name}: function(cntx) { }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("stays")) {
+                        state.stays.forEach(action => {
+                            str += `        ,${action.name}: function(cntx) { }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("entries")) {
+                        state.entries.forEach(action => {
+                            str += `        ,${action.name}: function(cntx) { }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("transitions")) {
+                        state.transitions.forEach(trans => {
+                            if (trans.hasOwnProperty("triggers")) {
+                                trans.triggers.forEach(trig => {
+                                    str += `        ,${trig.name}: function(cntx) { }\n`
+                                })
+                            }
+                            if (trans.hasOwnProperty("effects")) {
+                                trans.effects.forEach(effect => {
+                                    str += `        ,${effect.name}: function(cntx) { }\n`
+                                })
+                            }
+                        })
+                    }
                 }
-                if (state.hasOwnProperty("stays")) {
-                    state.stays.forEach(action => {
-                        str += `        ,${action.name}: function(cntx) { }\n`
-                    })
-                }
-                if (state.hasOwnProperty("entries")) {
-                    state.entries.forEach(action => {
-                        str += `        ,${action.name}: function(cntx) { }\n`
-                    })
-                }
-                if (state.hasOwnProperty("transitions")) {
-                    state.transitions.forEach(trans => {
-                        if (trans.hasOwnProperty("triggers")) {
-                            trans.triggers.forEach(trig => {
-                                str += `        ,${trig.name}: function(cntx) { }\n`
-                            })
-                        }
-                        if (trans.hasOwnProperty("effects")) {
-                            trans.effects.forEach(effect => {
-                                str += `        ,${effect.name}: function(cntx) { }\n`
-                            })
-                        }
-                    })
-                }
-            }
         } catch(e) {
             console.error('Error: ' + e.name + ":" + e.message + "\n" + e.stack);
         } finally {

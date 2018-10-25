@@ -8,39 +8,71 @@ const javaPatern = (function () {
             str += `      mSDK.put("${logic.start.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`+
                 `     ,mSDK.put("${logic.stop.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
 
-
-            for(let key of Object.keys(logic.states)) {
-                let state = logic.states[key];
-                if (state.hasOwnProperty("exits")) {
-                    state.exits.forEach(action => {
-                        str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
-                    })
+            if (Array.isArray(logic.states))
+                logic.states.forEach(state => {
+                    if (state.hasOwnProperty("exits")) {
+                        state.exits.forEach(action => {
+                            str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("stays")) {
+                        state.stays.forEach(action => {
+                            str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("entries")) {
+                        state.entries.forEach(action => {
+                            str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("transitions")) {
+                        state.transitions.forEach(trans => {
+                            if (trans.hasOwnProperty("triggers")) {
+                                trans.triggers.forEach(trig => {
+                                    str += `     ,mSDK.put("${trig.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                                })
+                            }
+                            if (trans.hasOwnProperty("effects")) {
+                                trans.effects.forEach(effect => {
+                                    str += `     ,mSDK.put("${effect.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                                })
+                            }
+                        })
+                    }
+                })
+            else
+                for(let key of Object.keys(logic.states)) {
+                    let state = logic.states[key];
+                    if (state.hasOwnProperty("exits")) {
+                        state.exits.forEach(action => {
+                            str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("stays")) {
+                        state.stays.forEach(action => {
+                            str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("entries")) {
+                        state.entries.forEach(action => {
+                            str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("transitions")) {
+                        state.transitions.forEach(trans => {
+                            if (trans.hasOwnProperty("triggers")) {
+                                trans.triggers.forEach(trig => {
+                                    str += `     ,mSDK.put("${trig.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                                })
+                            }
+                            if (trans.hasOwnProperty("effects")) {
+                                trans.effects.forEach(effect => {
+                                    str += `     ,mSDK.put("${effect.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
+                                })
+                            }
+                        })
+                    }
                 }
-                if (state.hasOwnProperty("stays")) {
-                    state.stays.forEach(action => {
-                        str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
-                    })
-                }
-                if (state.hasOwnProperty("entries")) {
-                    state.entries.forEach(action => {
-                        str += `     ,mSDK.put("${action.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
-                    })
-                }
-                if (state.hasOwnProperty("transitions")) {
-                    state.transitions.forEach(trans => {
-                        if (trans.hasOwnProperty("triggers")) {
-                            trans.triggers.forEach(trig => {
-                                str += `     ,mSDK.put("${trig.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
-                            })
-                        }
-                        if (trans.hasOwnProperty("effects")) {
-                            trans.effects.forEach(effect => {
-                                str += `     ,mSDK.put("${effect.name}", new Object() {@Override public boolean equals(Object obj) { mCntx cntx = (mCntx) obj; return true; }});\n`
-                            })
-                        }
-                    })
-                }
-            }
         } catch(e) {
             console.error('Error: ' + e.name + ":" + e.message + "\n" + e.stack);
         } finally {

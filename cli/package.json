@@ -1,6 +1,6 @@
 {
   "name": "dafsm_cli",
-  "version": "1.0.0",
+  "version": "1.6.0",
   "description": "Dynamic attachment finite state machine tools command line interface",
   "main": "index.js",
   "scripts": {

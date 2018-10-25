@@ -8,38 +8,71 @@ const swiftPatern = (function () {
             str += `         "${logic.start.name}": {(_ cntx: inout Context) -> Bool in return true }\n`+
                 `        ,"${logic.stop.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
 
-            for(let key of Object.keys(logic.states)) {
-                let state = logic.states[key];
-                if (state.hasOwnProperty("exits")) {
-                    state.exits.forEach(action => {
-                        str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
-                    })
+            if (Array.isArray(logic.states))
+                logic.states.forEach(state => {
+                    if (state.hasOwnProperty("exits")) {
+                        state.exits.forEach(action => {
+                            str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("stays")) {
+                        state.stays.forEach(action => {
+                            str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("entries")) {
+                        state.entries.forEach(action => {
+                            str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("transitions")) {
+                        state.transitions.forEach(trans => {
+                            if (trans.hasOwnProperty("triggers")) {
+                                trans.triggers.forEach(trig => {
+                                    str += `        ,"${trig.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                                })
+                            }
+                            if (trans.hasOwnProperty("effects")) {
+                                trans.effects.forEach(effect => {
+                                    str += `        ,"${effect.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                                })
+                            }
+                        })
+                    }
+                })
+            else
+                for(let key of Object.keys(logic.states)) {
+                    let state = logic.states[key];
+                    if (state.hasOwnProperty("exits")) {
+                        state.exits.forEach(action => {
+                            str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("stays")) {
+                        state.stays.forEach(action => {
+                            str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("entries")) {
+                        state.entries.forEach(action => {
+                            str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                        })
+                    }
+                    if (state.hasOwnProperty("transitions")) {
+                        state.transitions.forEach(trans => {
+                            if (trans.hasOwnProperty("triggers")) {
+                                trans.triggers.forEach(trig => {
+                                    str += `        ,"${trig.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                                })
+                            }
+                            if (trans.hasOwnProperty("effects")) {
+                                trans.effects.forEach(effect => {
+                                    str += `        ,"${effect.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
+                                })
+                            }
+                        })
+                    }
                 }
-                if (state.hasOwnProperty("stays")) {
-                    state.stays.forEach(action => {
-                        str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
-                    })
-                }
-                if (state.hasOwnProperty("entries")) {
-                    state.entries.forEach(action => {
-                        str += `        ,"${action.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
-                    })
-                }
-                if (state.hasOwnProperty("transitions")) {
-                    state.transitions.forEach(trans => {
-                        if (trans.hasOwnProperty("triggers")) {
-                            trans.triggers.forEach(trig => {
-                                str += `        ,"${trig.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
-                            })
-                        }
-                        if (trans.hasOwnProperty("effects")) {
-                            trans.effects.forEach(effect => {
-                                str += `        ,"${effect.name}": {(_ cntx: inout Context) -> Bool in return true }\n`
-                            })
-                        }
-                    })
-                }
-            }
         } catch(e) {
             console.error('Error: ' + e.name + ":" + e.message + "\n" + e.stack);
         } finally {
