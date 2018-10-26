@@ -1,0 +1,174 @@
+{
+  "id": "client",
+  "type": "FSM",
+  "prj": "tb_",
+  "complete": false,
+  "context": null,
+  "start": {
+    "name": "fn_initialize",
+    "func": null
+  },
+  "stop": {
+    "name": "fn_finishing",
+    "func": null
+  },
+  "countstates": 4,
+  "states": {
+    "init": {
+      "key": "init",
+      "name": "InitialState",
+      "transitions": [
+        {
+          "nextstate": null,
+          "nextstatename": "final",
+          "triggers": [
+            {
+              "name": "ev_outOfService",
+              "func": null
+            }
+          ],
+          "effects": [
+            {
+              "name": "fn_outOfServiceMsg",
+              "func": null
+            }
+          ]
+        },
+        {
+          "nextstate": null,
+          "nextstatename": "ready",
+          "triggers": [
+            {
+              "name": "ev_checkEnvComplete",
+              "func": null
+            }
+          ],
+          "effects": [
+            {
+              "name": "fn_signIn",
+              "func": null
+            }
+          ]
+        }
+      ]
+    },
+    "ready": {
+      "key": "ready",
+      "name": "readyState",
+      "entries": [
+        {
+          "name": "fn_updateActiveMembersList",
+          "func": null
+        }
+      ],
+      "exits": [
+        {
+          "name": "fn_startPacketStatistics",
+          "func": null
+        }
+      ],
+      "stays": [
+        {
+          "name": "fn_readyStayPolling",
+          "func": null
+        }
+      ],
+      "transitions": [
+        {
+          "nextstate": null,
+          "nextstatename": "connect",
+          "triggers": [
+            {
+              "name": "ev_inviteCall_acceptCall",
+              "func": null
+            }
+          ],
+          "effects": [
+            {
+              "name": "fn_reqCreateSession_reqTokenSession",
+              "func": null
+            }
+          ]
+        }
+      ]
+    },
+    "connect": {
+      "key": "connect",
+      "name": "connectState",
+      "entries": [
+        {
+          "name": "fn_initSession",
+          "func": null
+        },
+        {
+          "name": "fn_publishStreams",
+          "func": null
+        },
+        {
+          "name": "fn_showVideos",
+          "func": null
+        }
+      ],
+      "exits": [
+        {
+          "name": "fn_stopPacketStatistics",
+          "func": null
+        },
+        {
+          "name": "fn_storeStatistics",
+          "func": null
+        }
+      ],
+      "stays": [
+        {
+          "name": "fn_connectStayPolling",
+          "func": null
+        }
+      ],
+      "transitions": [
+        {
+          "nextstate": null,
+          "nextstatename": "final",
+          "triggers": [
+            {
+              "name": "ev_networkProblem",
+              "func": null
+            }
+          ],
+          "effects": [
+            {
+              "name": "fn_reportProblem",
+              "func": null
+            }
+          ]
+        },
+        {
+          "nextstate": null,
+          "nextstatename": "ready",
+          "triggers": [
+            {
+              "name": "ev_hangUp",
+              "func": null
+            }
+          ],
+          "effects": [
+            {
+              "name": "fn_disconnectSession",
+              "func": null
+            }
+          ]
+        }
+      ]
+    },
+    "final": {
+      "key": "final",
+      "name": "FinalState",
+      "entries": [
+        {
+          "name": "fn_finallyReport",
+          "func": null
+        }
+      ]
+    }
+  }
+}
