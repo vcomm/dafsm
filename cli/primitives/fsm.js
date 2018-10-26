@@ -30,12 +30,18 @@ const fsmChart = (function () {
     }
     function getStateIndx(statekey) {
         let indx = 0
-        for(let key of Object.keys(logic.states)) {
-            if (key === statekey)
-                return indx
-            else
-                indx++
-        }
+        if (Array.isArray(logic.states))
+            for(indx=0; indx<logic.states.length; indx++) {
+                if (logic.states[indx].key === statekey)
+                    return indx
+            }
+        else
+            for(let key of Object.keys(logic.states)) {
+                if (key === statekey)
+                    return indx
+                else
+                    indx++
+            }
     }
     function calcPlan(logic) {
         plan.numQuadrans = logic.countstates
@@ -305,7 +311,24 @@ const fsmChart = (function () {
     }
     function drawStateTranEffect(state,indx,trans,effname) {
     }
-
+    function getByKey(obj, key, value) {
+        if (typeof Array.isArray === 'undefined') {
+            Array.isArray = function(obj) {
+                return Object.prototype.toString.call(obj) === '[object Array]';
+            }
+        }
+        if (Array.isArray(obj)) {
+            let item = null
+            for (let i=0; i<obj.length; i++) {
+                item = obj[i]
+                if (item[key] === value)
+                    break
+            }
+            return item
+        } else {
+            return obj[value]
+        }
+    }
     return {
         draw: function(fsm,w,h) {
             logic = fsm
@@ -333,42 +356,79 @@ const fsmChart = (function () {
             try {
                 let indx = 0
                 calcPlan(logic)
-                for(let key of Object.keys(logic.states)) {
-                    let state = logic.states[key];
-                    drawState(state,indx)
-                    if (state.hasOwnProperty("exits")) {
-                        state.exits.forEach(action => {
-                            drawStateExits(state,indx,action.name)
-                        })
+                if (Array.isArray(logic.states))
+                    logic.states.forEach(state => {
+                        drawState(state,indx)
+                        if (state.hasOwnProperty("exits")) {
+                            state.exits.forEach(action => {
+                                drawStateExits(state,indx,action.name)
+                            })
+                        }
+                        if (state.hasOwnProperty("stays")) {
+                            state.stays.forEach(action => {
+                                drawStateStays(state,indx,action.name)
+                            })
+                        }
+                        if (state.hasOwnProperty("entries")) {
+                            state.entries.forEach(action => {
+                                drawStateEntries(state,indx,action.name)
+                            })
+                        }
+                        if (state.hasOwnProperty("transitions")) {
+                            state.transitions.forEach(trans => {
+                                let nextstate = getByKey(logic.states, "key", trans.nextstatename)
+                                drawTransition(state,trans)
+                                if (trans.hasOwnProperty("triggers")) {
+                                    trans.triggers.forEach(trig => {
+                                        drawStateTranTrig(state,indx,trans,trig.name,nextstate)
+                                    })
+                                }
+                                if (trans.hasOwnProperty("effects")) {
+                                    trans.effects.forEach(effect => {
+                                        drawStateTranEffect(state,indx,trans,effect.name)
+                                    })
+                                }
+                            })
+                        }
+                        indx++
+                    })
+                else
+                    for(let key of Object.keys(logic.states)) {
+                        let state = logic.states[key];
+                        drawState(state,indx)
+                        if (state.hasOwnProperty("exits")) {
+                            state.exits.forEach(action => {
+                                drawStateExits(state,indx,action.name)
+                            })
+                        }
+                        if (state.hasOwnProperty("stays")) {
+                            state.stays.forEach(action => {
+                                drawStateStays(state,indx,action.name)
+                            })
+                        }
+                        if (state.hasOwnProperty("entries")) {
+                            state.entries.forEach(action => {
+                                drawStateEntries(state,indx,action.name)
+                            })
+                        }
+                        if (state.hasOwnProperty("transitions")) {
+                            state.transitions.forEach(trans => {
+                                let nextstate = logic.states[trans.nextstatename]
+                                drawTransition(state,trans)
+                                if (trans.hasOwnProperty("triggers")) {
+                                    trans.triggers.forEach(trig => {
+                                        drawStateTranTrig(state,indx,trans,trig.name,nextstate)
+                                    })
+                                }
+                                if (trans.hasOwnProperty("effects")) {
+                                    trans.effects.forEach(effect => {
+                                        drawStateTranEffect(state,indx,trans,effect.name)
+                                    })
+                                }
+                            })
+                        }
+                        indx++
                     }
-                    if (state.hasOwnProperty("stays")) {
-                        state.stays.forEach(action => {
-                            drawStateStays(state,indx,action.name)
-                        })
-                    }
-                    if (state.hasOwnProperty("entries")) {
-                        state.entries.forEach(action => {
-                            drawStateEntries(state,indx,action.name)
-                        })
-                    }
-                    if (state.hasOwnProperty("transitions")) {
-                        state.transitions.forEach(trans => {
-                            let nextstate = logic.states[trans.nextstatename]
-                            drawTransition(state,trans)
-                            if (trans.hasOwnProperty("triggers")) {
-                                trans.triggers.forEach(trig => {
-                                    drawStateTranTrig(state,indx,trans,trig.name,nextstate)
-                                })
-                            }
-                            if (trans.hasOwnProperty("effects")) {
-                                trans.effects.forEach(effect => {
-                                    drawStateTranEffect(state,indx,trans,effect.name)
-                                })
-                            }
-                        })
-                    }
-                    indx++
-                }
             } catch(e) {
                 console.error('Error: ' + e.name + ":" + e.message + "\n" + e.stack);
             } finally {
